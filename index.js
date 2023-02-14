@@ -10,21 +10,28 @@
 // let parse = response => JSON.parse(response);
 // console.log([...parse(xml.responseText).children, ...parse(xml2.responseText).children])
 
+let data = []
+
 function requestData(method, action, callback) {
     const xml = new XMLHttpRequest();
     xml.open(method, action);
     xml.send();
     let parse = response => JSON.parse(response);
     xml.addEventListener("readystatechange", () => {
-        if(xml.readyState === 4 && xml.status === 200) {
+        if (xml.readyState === 4 && xml.status === 200) {
             const response = parse(xml.responseText).children;
-
-            callback(response);
+            data = data.concat(response);
+            if (typeof callback === 'function') {
+                callback(data);
+            }
         }
     })
 }
-function renderElem(response) {
-    response.forEach(item => console.log(item));
+
+const renderElem = function (response) {
+    console.log(response);
 }
-requestData("GET", "request/data.json", renderElem);
+
+requestData("GET", `${"request/data.json"}`);
 requestData("GET", "request/data2.json", renderElem);
+
